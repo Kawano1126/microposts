@@ -13,8 +13,20 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
+     * このユーザーが所有する投稿。（ Micropostモデルとの関係を定義）
+     */
+    public function microposts()
+    {
+        return $this->hasMany(Micropost::class);
+    }
+    /**
+     * このユーザーに関係するモデルの件数をロードする。
+     */
+    public function loadRelationshipCounts()
+    {
+        $this->loadCount('microposts');
+    }
+    /*
      * @var array<int, string>
      */
     protected $fillable = [
