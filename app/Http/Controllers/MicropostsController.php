@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Micropost;
+
 class MicropostsController extends Controller
 {
     public function index()
