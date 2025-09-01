@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\MicropostsController;
 use App\Http\Controllers\UserFollowController;  // 追記
+use App\Http\Controllers\UserFavoriteController;  // 追記
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +29,12 @@ Route::middleware('auth')->group(function () {
         Route::delete('unfollow', [UserFollowController::class, 'destroy'])->name('user.unfollow');
         Route::get('followings', [UsersController::class, 'followings'])->name('users.followings');
         Route::get('followers', [UsersController::class, 'followers'])->name('users.followers');
+        // お気に入り関連
+        Route::post('favorite', [UserFavoriteController::class, 'store'])->name('user.favorite');
+        Route::delete('unfavorite', [UserFavoriteController::class, 'destroy'])->name('user.unfavorite');
+        Route::get('favorites', [UsersController::class, 'favorites'])->name('users.favorites');
     });
+
     Route::resource('users', UsersController::class, ['only' => ['index', 'show']]);
     //Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     //Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -24,7 +24,7 @@ class User extends Authenticatable
      */
     public function loadRelationshipCounts()
     {
-        $this->loadCount(['microposts', 'followings', 'followers']);
+        $this->loadCount(['microposts', 'followings', 'followers','favorites']);
     }
     /**
      * このユーザーがフォロー中のユーザー。（Userモデルとの関係を定義）
@@ -41,6 +41,23 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'user_follow', 'follow_id', 'user_id')->withTimestamps();
     }
+
+    /**
+ * このユーザーが「お気に入り」しているユーザー。（Userモデルとの関係を定義）
+ */
+    public function favorites()
+    {
+        return $this->belongsToMany(User::class, 'user_favorites', 'user_id', 'favorite_id')->withTimestamps();
+    }
+
+/**
+ * このユーザーを「お気に入り」しているユーザー。（Userモデルとの関係を定義）
+ */
+    public function unfavorites()
+    {
+    return $this->belongsToMany(User::class, 'user_favorites', 'favorite_id', 'user_id')->withTimestamps();
+    }
+
     /*
      * @var array<int, string>
      */
@@ -128,5 +145,55 @@ class User extends Authenticatable
         $userIds[] = $this->id;
         // それらのユーザーが所有する投稿に絞り込む
         return Micropost::whereIn('user_id', $userIds);
+    }
+    //  お気に入り機能
+
+    /**
+     * $userIdで指定されたユーザーをお気に入りする。
+     *
+     * @param int $userId
+     * @return bool
+     */
+    public function favorite(int $userId)
+    {
+        $exist = $this->is_favoriting($userId);
+        $its_me = $this->id == $userId;
+
+        if ($exist || $its_me) {
+            return false;
+        } else {
+            $this->favorites()->attach($userId);
+            return true;
+        }
+    }
+
+    /**
+     * $userIdで指定されたユーザーのお気に入りを解除する。
+     *
+     * @param int $userId
+     * @return bool
+     */
+    public function unfavorite(int $userId)
+    {
+        $exist = $this->is_favoriting($userId);
+        $its_me = $this->id == $userId;
+
+        if ($exist && !$its_me) {
+            $this->favorites()->detach($userId);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 指定された$userIdのユーザーをこのユーザーがお気に入りしているか調べる。お気に入りしていればtrue。
+     *
+     * @param int $userId
+     * @return bool
+     */
+    public function is_favoriting(int $userId)
+    {
+        return $this->favorites()->where('favorite_id', $userId)->exists();
     }
 }
