@@ -10,4 +10,3 @@
 {{-- フォロー／アンフォローボタン --}}
 @include('user_follow.follow_button')
 {{-- お気に入り／お気に入り解除ボタン --}}
-@include('user_favorite.favorite_button')

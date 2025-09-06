@@ -19,6 +19,15 @@
                             {{-- 投稿内容 --}}
                             <p class="mb-0">{!! nl2br(e($micropost->content)) !!}</p>
                         </div>
+                        {{-- ★ お気に入りボタン --}}
+                        <div class="mt-2 flex items-center gap-3">
+                            @include('favorite.favorite_button', ['micropost' => $micropost])
+                            {{-- （任意）件数バッジを出したい場合
+                            <span class="badge">
+                                {{ $micropost->favored_by_count ?? $micropost->favoredBy()->count() }} お気に入り
+                            </span>
+                            --}}
+                        </div>
                         <div>
                             @if (Auth::id() == $micropost->user_id)
                                 {{-- 投稿削除ボタンのフォーム --}}
